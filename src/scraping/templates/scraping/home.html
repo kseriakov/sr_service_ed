@@ -12,14 +12,21 @@
             <p>{{ obj.city.name }} | {{ obj.language }} | <small>{{ obj.timestamp }}</small></p>
         </div>
     </div>
+    {% empty %}
+    <div class="col-md-7 ms-auto me-auto">
+        <h3>К сожалению, по вашему запросу ничего не найдено</h3>
+    </div>
     {% endfor %}
-    <form action="">
-        <label for="city">Город</label><br>
-        <input type="text" name="city" id="city"><br>
-        <label for="language">Язык программирования</label><br>
-        <input type="text" name="language" id="language"><br>
-        <input type="submit" value="Отправить">
-    </form>
-    {% endblock %}
+
+    <div class="row">
+        <div class="col-md-4 ms-auto me-auto">
+            <form action="">
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
+            {% endblock %}
+
+        </div>
+    </div>
 
 </div>
