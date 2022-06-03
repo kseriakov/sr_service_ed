@@ -1,13 +1,17 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import json
-import re
+from random_user_agent.user_agent import UserAgent
+
+
+__all__ = ('work', 'hh_ru', 'super_job')
+
+user_agent_rotator = UserAgent()
+random_user_agent = user_agent_rotator.get_random_user_agent()
 
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36',
+    'User-Agent': random_user_agent,
     'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8', }
-
-url = 'https://www.work.ua/ru/jobs-python/'
 
 
 def work(url):
@@ -50,11 +54,19 @@ def hh_ru(url):
                 title = item.find('a').string
                 href = item.find('a')['href']
                 company = 'Noname'
-                if cmp := item.find('img'):
-                    company = cmp['alt']
-                content = item.find('div', attrs={'data-qa': 'vacancy-serp__vacancy_snippet_responsibility'}).string +'\n'
-                if content_req := item.find('div', attrs={'data-qa': 'vacancy-serp__vacancy_snippet_requirement'}):
-                    content += content_req.string
+                try:
+                    company = item.find('a', attrs={'data-qa': 'vacancy-serp__vacancy-employer'}).text
+                except:
+                    pass
+                try:
+                    content = item.find('div', attrs={'data-qa': 'vacancy-serp__vacancy_snippet_responsibility'}).string +'\n'
+                except:
+                    content = ''
+                try:
+                    if content_req := item.find('div', attrs={'data-qa': 'vacancy-serp__vacancy_snippet_requirement'}):
+                        content += content_req.string
+                except:
+                    content = content or 'No content'
 
                 jobs.append({'title': title, 'url': href, 'description': content, 'company': company})
         else:
@@ -80,7 +92,13 @@ def super_job(url):
                 company = 'Noname'
                 if cmp := item.find_all('a').pop(1):
                     company = cmp.string
-                content = item.find_all('span')[10].text
+                content_list = item.find_all('span')
+                for i in content_list:
+                    if len(i.text) > 70:
+                        content = i.text
+                        break
+                else:
+                   content = 'No content'
 
                 jobs.append({'title': title, 'url': href, 'description': content, 'company': company})
         else:
@@ -93,10 +111,7 @@ def super_job(url):
 
 if __name__ == '__main__':
     url = 'https://russia.superjob.ru/vacancy/search/?keywords=python'
-    jobs, errors = super_job(url)
-with open('jobs.json', 'w') as j, open('errors.json', 'w') as e:
-    j.write(json.dumps(jobs))
-    e.write(json.dumps(errors))
-
-with open('jobs.json', encoding='UTF-8') as f:
-    res = json.loads(f.read())
+    jobs, errors = hh_ru(url)
+    with open('jobs.json', 'w') as j, open('errors.json', 'w') as e:
+        j.write(json.dumps(jobs))
+        e.write(json.dumps(errors))

@@ -3,6 +3,10 @@ from django.db import models
 from .utils import *
 
 
+def default_urls():
+    return {'hh_ru': '', 'super_job': ''}
+
+
 class City(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название населенного пункта', unique=True)
     slug = models.CharField(max_length=50, blank=True, unique=True)
@@ -52,3 +56,18 @@ class Vacancy(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Error(models.Model):
+    timestamp = models.DateField(auto_now_add=True, verbose_name='Дата добавления')
+    data = models.JSONField(verbose_name='Ошибки')
+
+
+class Url(models.Model):
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name='Город')
+    language = models.ForeignKey(Language, on_delete=models.CASCADE, verbose_name='Язык программирования')
+    data = models.JSONField(default=default_urls)
+
+    class Meta:
+        unique_together = ['city', 'language']
+
