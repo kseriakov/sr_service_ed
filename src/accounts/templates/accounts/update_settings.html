@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="me-auto ms-auto" style="text-align:center;">
+            <h3>Изменение настроек рассылки</h3>
+        </div>
+        <div class="col-md-4 ms-auto me-auto">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Применить</button>
+            </form>
+            
+              <form action="{% url 'accounts:delete' %}" method="POST">
+                  {% csrf_token %}
+                <button type="submit" class="btn btn-danger mt-3">Удалить пользователя</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

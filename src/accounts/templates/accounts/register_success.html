@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="me-auto ms-auto mt-5" style="text-align:center;">
+            <h4>{{ new_user }}, поздравляем, Вы успешно зарегистрировались на сайте!</h4><br>
+            <h5>Теперь Вы можете <a href="{% url 'accounts:login' %}">войти</a></h5>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -4,12 +4,13 @@
 <div class="container">
     <div class="row">
         <div class="me-auto ms-auto" style="text-align:center;">
-            <h3>Выберите город или язык программирования</h3>
+            <h3>Форма входа на сайт</h3>
         </div>
         <div class="col-md-4 ms-auto me-auto">
-            <form action="{% url 'list' %}">
+            <form action="" method="POST">
+                {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Отправить</button>
+                <button type="submit" class="btn btn-primary">Войти</button>
             </form>
             {% endblock %}
         </div>

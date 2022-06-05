@@ -41,70 +41,74 @@ def work(url):
     return jobs, errors
 
 
-def hh_ru(url):
+def hh_ru(url, city=None, language=None):
     jobs = []
     errors = []
-    request = requests.get(url=url, headers=headers)
-    if request.status_code == 200:
-        soup = bs(request.content, 'html.parser')
-        div_main = soup.find('div', attrs={'id': 'a11y-main-content'})
-        if div_main:
-            div_list = div_main.find_all('div', class_='vacancy-serp-item')
-            for item in div_list:
-                title = item.find('a').string
-                href = item.find('a')['href']
-                company = 'Noname'
-                try:
-                    company = item.find('a', attrs={'data-qa': 'vacancy-serp__vacancy-employer'}).text
-                except:
-                    pass
-                try:
-                    content = item.find('div', attrs={'data-qa': 'vacancy-serp__vacancy_snippet_responsibility'}).string +'\n'
-                except:
-                    content = ''
-                try:
-                    if content_req := item.find('div', attrs={'data-qa': 'vacancy-serp__vacancy_snippet_requirement'}):
-                        content += content_req.string
-                except:
-                    content = content or 'No content'
+    if url:
+        request = requests.get(url=url, headers=headers)
+        if request.status_code == 200:
+            soup = bs(request.content, 'html.parser')
+            div_main = soup.find('div', attrs={'id': 'a11y-main-content'})
+            if div_main:
+                div_list = div_main.find_all('div', class_='vacancy-serp-item')
+                for item in div_list:
+                    title = item.find('a').string
+                    href = item.find('a')['href']
+                    company = 'Noname'
+                    try:
+                        company = item.find('a', attrs={'data-qa': 'vacancy-serp__vacancy-employer'}).text
+                    except:
+                        pass
+                    try:
+                        content = item.find('div', attrs={'data-qa': 'vacancy-serp__vacancy_snippet_responsibility'}).string +'\n'
+                    except:
+                        content = ''
+                    try:
+                        if content_req := item.find('div', attrs={'data-qa': 'vacancy-serp__vacancy_snippet_requirement'}):
+                            content += content_req.string
+                    except:
+                        content = content or 'No content'
 
-                jobs.append({'title': title, 'url': href, 'description': content, 'company': company})
+                    jobs.append({'title': title, 'url': href, 'description': content, 'company': company,
+                                 'city_id': city, 'language_id': language})
+            else:
+                errors.append({'url': url, 'title': 'Div does not exists'})
         else:
-            errors.append({'url': url, 'title': 'Div does not exists'})
-    else:
-        errors.append({'url': url, 'title': 'Page do not response'})
+            errors.append({'url': url, 'title': 'Page do not response'})
 
     return jobs, errors
 
 
-def super_job(url):
+def super_job(url, city=None, language=None):
     jobs = []
     errors = []
     domain = 'https://russia.superjob.ru'
-    request = requests.get(url=url, headers=headers)
-    if request.status_code == 200:
-        soup = bs(request.content, 'html.parser')
-        div_list = soup.find_all('div', attrs={'class': 'f-test-vacancy-item'})
-        if div_list:
-            for item in div_list:
-                title = item.find('a').text
-                href = domain + item.find('a')['href']
-                company = 'Noname'
-                if cmp := item.find_all('a').pop(1):
-                    company = cmp.string
-                content_list = item.find_all('span')
-                for i in content_list:
-                    if len(i.text) > 70:
-                        content = i.text
-                        break
-                else:
-                   content = 'No content'
+    if url:
+        request = requests.get(url=url, headers=headers)
+        if request.status_code == 200:
+            soup = bs(request.content, 'html.parser')
+            div_list = soup.find_all('div', attrs={'class': 'f-test-vacancy-item'})
+            if div_list:
+                for item in div_list:
+                    title = item.find('a').text
+                    href = domain + item.find('a')['href']
+                    company = 'Noname'
+                    if cmp := item.find_all('a').pop(1):
+                        company = cmp.string
+                    content_list = item.find_all('span')
+                    for i in content_list:
+                        if len(i.text) > 70:
+                            content = i.text
+                            break
+                    else:
+                       content = 'No content'
 
-                jobs.append({'title': title, 'url': href, 'description': content, 'company': company})
+                    jobs.append({'title': title, 'url': href, 'description': content, 'company': company,
+                                 'city_id': city, 'language_id': language})
+            else:
+                errors.append({'url': url, 'title': 'Div does not exists'})
         else:
-            errors.append({'url': url, 'title': 'Div does not exists'})
-    else:
-        errors.append({'url': url, 'title': 'Page do not response'})
+            errors.append({'url': url, 'title': 'Page do not response'})
 
     return jobs, errors
 
