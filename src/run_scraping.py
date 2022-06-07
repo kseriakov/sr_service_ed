@@ -35,13 +35,13 @@ def get_urls(set_city_lang):
     urls_dict = {(i['city_id'], i['language_id']): i['data'] for i in qs}
     urls = []
     for pair in set_city_lang:
-        d = {
-            'city_id': pair[0],
-            'language_id': pair[1],
-            'data': urls_dict.get(pair)
-        }
-        urls.append(d)
-
+        if pair in urls_dict:
+            d = {
+                'city_id': pair[0],
+                'language_id': pair[1],
+                'data': urls_dict.get(pair)
+            }
+            urls.append(d)
     return urls
 
 
@@ -90,6 +90,12 @@ loop.close()
 for job in jobs:
     try:
         Vacancy.objects.create(**job)
+    except DatabaseError:
+        pass
+
+if errors:
+    try:
+        Error.objects.create(data=f'errors:{errors}')
     except DatabaseError:
         pass
 
