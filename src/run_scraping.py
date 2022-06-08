@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import json
 from pathlib import Path
 import sys, os
@@ -93,11 +94,19 @@ for job in jobs:
     except DatabaseError:
         pass
 
-if errors:
+qs = Error.objects.filter(timestamp=datetime.datetime.today())
+if qs and errors:
+    errors_today = qs.first()
+    errors_today.data.update({'errors': errors})
+    errors_today.save()
+elif errors:
     try:
         Error.objects.create(data=f'errors:{errors}')
     except DatabaseError:
         pass
+
+ten_days = datetime.datetime.today() - datetime.timedelta(10)
+delete_old_vacancies = Vacancy.objects.filter(timestamp__lte=ten_days)
 
 # with open('jobs.json', 'w') as j, open('errors.json', 'w') as e:
 #     j.write(json.dumps(jobs))

@@ -61,3 +61,8 @@ class UserUpdateSettings(forms.ModelForm):
             'language': forms.Select(attrs={'class': 'form-control'}),
         }
 
+
+class ContactUserForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    city = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Ваш город')
+    language = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Язык программирования')

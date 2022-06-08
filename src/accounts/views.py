@@ -1,8 +1,10 @@
 from django.contrib.auth import logout, login
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from datetime import datetime
 
 from .forms import *
+from scraping.models import *
 
 
 def login_view(request):
@@ -43,6 +45,7 @@ def register_view(request):
 
 
 def update_view(request):
+    contact_form = ContactUserForm()
     if request.user.is_authenticated:
         user = request.user
         if request.method == 'POST':
@@ -61,7 +64,7 @@ def update_view(request):
     else:
         return redirect('accounts:login')
 
-    return render(request, 'accounts/update_settings.html', {'form': form})
+    return render(request, 'accounts/update_settings.html', {'form': form, 'contact_form': contact_form})
 
 
 def delete_view(request):
@@ -70,5 +73,31 @@ def delete_view(request):
         if request.method == 'POST':
             u = get_user_model().objects.get(pk=user.pk)
             u.delete()
-            messages.add_message(request, messages.SUCCESS, 'Пользователь удален')
+            messages.add_message(request, messages.ERROR, 'Пользователь удален')
             return redirect('home')
+
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactUserForm(data=request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            city = data.get('city')
+            language = data.get('language')
+            email = data.get('email')
+            data_error = {'city': city, 'language': language, 'email': email}
+            qs = Error.objects.filter(timestamp=datetime.today())
+            if qs:
+                errors_today = qs.first()
+                user_errors = errors_today.data.setdefault('user_errors', [])
+                user_errors.append(data_error)
+                errors_today.save()
+
+            else:
+                Error.objects.create(data=f'user_errors:{[data_error]}')
+
+            messages.add_message(request, messages.SUCCESS, 'Данные успешно отправлены')
+
+        return redirect('accounts:update')
+    else:
+        return redirect('accounts:login')

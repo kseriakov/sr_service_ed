@@ -33,8 +33,9 @@ for item in qs:
 if user_dict:
     conditions = {'city_id__in': [], 'language_id__in': []}
     for key in user_dict.keys():
-        conditions['city_id__in'].append(key[0])
-        conditions['language_id__in'].append(key[1])
+        if key[0] and key[1]:
+            conditions['city_id__in'].append(key[0])
+            conditions['language_id__in'].append(key[1])
 
     vacancy_for_send = Vacancy.objects.filter(**conditions, timestamp=to_day).values()
     content_for_send = {}
@@ -55,30 +56,40 @@ if user_dict:
         for email in emails:
             msg = EmailMultiAlternatives(subject, text_content, from_email, to=(email, ))
             msg.attach_alternative(res_html, "text/html")
-            msg.send()
+            # msg.send()
 
 
 errors_data = Error.objects.filter(timestamp=to_day)
 if errors_data:
     html_err = ''
-    for item in errors_data.first().data:
-        html_err += f'<a href="{ item["url"] }">Errors: { item["title"] }</a><br><hr>'
+    errors_d = errors_data.first()
+    if errors_url := errors_d.data.get('errors'):
+        html_err += f'<h3>Обнаружены следующие ошибки скрапинга:</h3>'
+        for item in errors_url:
+            html_err += f'<a href="{ item["url"] }">Errors: { item["title"] }</a><br><hr><br>'
 
-    msg = EmailMultiAlternatives(f'Ошибки скрапинга на {to_day}', 'Ошибки скрапинга', from_email, to=(EMAIL_ADMIN_USER, ))
-    msg.attach_alternative(html_err, "text/html")
-    msg.send()
+    if user_errors := errors_d.data.get('user_errors'):
+        html_err += f'<h3>Необходимо добавить следующие пары: город, ЯП:</h3>'
+        for item in user_errors:
+            html_err += f'<p>{ item["email"]} --- город: {item["city"]} || ЯП: {item["language"]} </p><br><hr><br>'
 
 
 all_users = get_user_model().objects.all().values('city', 'language')
 
 all_set_city_lang = {(i['city'], i['language']) for i in all_users}
 
+
 no_urls = ''
 for item in list(all_set_city_lang):
+    no_urls += f'<h3>Обнаружены отсутствующие url для следующих пар:</h3>'
     if item not in user_dict:
-        no_urls += f'<h6>Отсутствует url для пары - город: {item[0]}, язык: {item[1]}</h6><br><hr>'
+        no_urls += f'<p>Город: {item[0]}, язык: {item[1]}<p><br><hr>'
 
-if no_urls:
-    msg = EmailMultiAlternatives(f'Обнаружены недостающие urls', 'Надо добавить urls', from_email, to=(EMAIL_ADMIN_USER, ))
-    msg.attach_alternative(no_urls, "text/html")
-    msg.send()
+if html_err or no_urls:
+        msg = EmailMultiAlternatives(subject=f'Системные сообщения', body='В работе сайта обнаружены следующие проблемы',
+                                     from_email=from_email, to=(EMAIL_ADMIN_USER,))
+        msg.attach_alternative((html_err if html_err else '') + (no_urls if no_urls else ''), "text/html")
+        msg.send()
+
+
+
