@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import sys, os
 import django
@@ -56,12 +57,12 @@ if user_dict:
         for email in emails:
             msg = EmailMultiAlternatives(subject, text_content, from_email, to=(email, ))
             msg.attach_alternative(res_html, "text/html")
-            # msg.send()
+            msg.send()
 
 
 errors_data = Error.objects.filter(timestamp=to_day)
+html_err = ''
 if errors_data:
-    html_err = ''
     errors_d = errors_data.first()
     if errors_url := errors_d.data.get('errors'):
         html_err += f'<h3>Обнаружены следующие ошибки скрапинга:</h3>'
@@ -80,10 +81,13 @@ all_set_city_lang = {(i['city'], i['language']) for i in all_users}
 
 
 no_urls = ''
-for item in list(all_set_city_lang):
-    no_urls += f'<h3>Обнаружены отсутствующие url для следующих пар:</h3>'
-    if item not in user_dict:
-        no_urls += f'<p>Город: {item[0]}, язык: {item[1]}<p><br><hr>'
+if all_set_city_lang:
+    for item in list(all_set_city_lang):
+        no_urls += f'<h3>Обнаружены отсутствующие url для следующих пар:</h3>'
+        if item not in user_dict:
+            no_urls += f'<p>Город: {item[0]}, язык: {item[1]}<p><br><hr>'
+    if 'Город' not in no_urls:
+        no_urls = ''
 
 if html_err or no_urls:
         msg = EmailMultiAlternatives(subject=f'Системные сообщения', body='В работе сайта обнаружены следующие проблемы',

@@ -12,9 +12,9 @@
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Применить</button>
             </form>
-            
-              <form action="{% url 'accounts:delete' %}" method="POST">
-                  {% csrf_token %}
+
+            <form action="{% url 'accounts:delete' %}" method="POST">
+                {% csrf_token %}
                 <button type="submit" class="btn btn-danger mt-3">Удалить пользователя</button>
             </form>
         </div>
@@ -26,13 +26,25 @@
         <div class="me-auto ms-auto" style="text-align:center;">
             <h6>Вы можете отправить письмо администрации с просьбой добавить новый город и язык программирования</h6>
         </div>
-        <div class="col-md-4 ms-auto me-auto">
-            <form action="{% url 'accounts:contact' %}" method="POST">
-                {% csrf_token %}
-                {{ contact_form.as_p }}
-                <button type="submit" class="btn btn-primary">Отправить</button>
-            </form>
-            
+        <div class="col-md-4 ms-auto me-auto mt-3">
+            <p>
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseExample"
+                        aria-expanded="false" aria-controls="collapseExample">
+                    Открыть форму
+                </button>
+            </p>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    <form action="{% url 'accounts:contact' %}" method="POST">
+                        {% csrf_token %}
+                        {{ contact_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </form>
+                </div>
+            </div>
+
+
         </div>
     </div>
 </div>

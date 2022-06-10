@@ -4,6 +4,9 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 ms-auto me-auto">
+            <div class="text-center">
+                <h4>По вашему запросу получены следующие результаты</h4>
+            </div>
             {% for obj in object_list %}
             <div class="card mt-3">
                 <div class="card-header">
@@ -63,13 +66,7 @@
             <!--            </div>-->
             {% endif %}
 
-            <div class="row">
-                <div class="col-md-4 ms-auto me-auto">
-                    <form action="">
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary">Отправить</button>
-                    </form>
-                    {% endblock %}
+                   {% endblock %}
 
                 </div>
             </div>

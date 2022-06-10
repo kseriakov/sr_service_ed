@@ -85,16 +85,16 @@ def contact(request):
             city = data.get('city')
             language = data.get('language')
             email = data.get('email')
-            data_error = {'city': city, 'language': language, 'email': email}
+            data_error = {"city": city, "language": language, "email": email}
             qs = Error.objects.filter(timestamp=datetime.today())
             if qs:
                 errors_today = qs.first()
-                user_errors = errors_today.data.setdefault('user_errors', [])
+                user_errors = errors_today.data.setdefault("user_errors", [])
                 user_errors.append(data_error)
                 errors_today.save()
 
             else:
-                Error.objects.create(data=f'user_errors:{[data_error]}')
+                Error.objects.create(data={"user_errors": [data_error]})
 
             messages.add_message(request, messages.SUCCESS, 'Данные успешно отправлены')
 

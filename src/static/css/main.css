@@ -1,0 +1,9 @@
+@font-face {
+    font-family: Dancing-Font;
+    src: url(../fonts/DancingScript-Regular.ttf);
+}
+
+#brand-site {
+    font-family: Dancing-Font;
+    font-size: 25px;
+}
