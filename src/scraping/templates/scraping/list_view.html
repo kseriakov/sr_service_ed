@@ -4,10 +4,10 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 ms-auto me-auto">
+            {% for obj in object_list %}
             <div class="text-center">
                 <h4>По вашему запросу получены следующие результаты</h4>
             </div>
-            {% for obj in object_list %}
             <div class="card mt-3">
                 <div class="card-header">
                     <a href="{{ obj.url }}">{{ obj.title }}</a>
@@ -29,9 +29,10 @@
                 <ul class="pagination justify-content-center">
 
                     <li class="page-item {% if not object_list.has_previous %}disabled{% endif %}">
-                        <a class="page-link" href="{% if object_list.has_previous %}?{{ params }}page={{ object_list.previous_page_number }}{% else %}#{% endif %}">Предыдущая</a>
+                        <a class="page-link"
+                           href="{% if object_list.has_previous %}?{{ params }}page={{ object_list.previous_page_number }}{% else %}#{% endif %}">Предыдущая</a>
 
-                    {% for num_page in object_list.paginator.page_range %}
+                        {% for num_page in object_list.paginator.page_range %}
                     <li class="page-item {% if object_list.number == num_page  %}active{% endif %}">
                         {% if object_list.number == num_page %}
                         <a class="page-link " href="#">{{ num_page }}</a>
@@ -42,7 +43,8 @@
                     {% endfor %}
 
                     <li class="page-item {% if not object_list.has_next %}disabled{% endif %}">
-                        <a class="page-link" href="{% if object_list.has_next %}?{{ params }}page={{ object_list.next_page_number }}{% else %}#{% endif %}">Следующая</a>
+                        <a class="page-link"
+                           href="{% if object_list.has_next %}?{{ params }}page={{ object_list.next_page_number }}{% else %}#{% endif %}">Следующая</a>
                 </ul>
             </nav>
 
@@ -66,10 +68,23 @@
             <!--            </div>-->
             {% endif %}
 
-                   {% endblock %}
 
-                </div>
-            </div>
         </div>
     </div>
 </div>
+</div>
+</div>
+<div class="container mt-3 mb-5">
+    <div class="row">
+        <div class="me-auto ms-auto" style="text-align:center;">
+            <h5>Введите новые данные для поиска</h5>
+        </div>
+        <div class="col-md-4 ms-auto me-auto">
+            <form action="{% url 'list' %}">
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

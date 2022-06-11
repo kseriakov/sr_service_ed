@@ -54,6 +54,7 @@ class Vacancy(models.Model):
     class Meta:
         verbose_name = 'Вакансия'
         verbose_name_plural = 'Вакансии'
+        ordering = ['-timestamp']
 
     def __str__(self):
         return self.title
@@ -65,6 +66,7 @@ class Error(models.Model):
 
     def __str__(self):
         return str(self.timestamp)
+
 
 class Url(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name='Город')

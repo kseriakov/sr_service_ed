@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 ms-auto me-auto">
+            <div class="card mt-3">
+                <div class="card-header">
+                    <a href="{{ obj.url }}">{{ vacancy.title }}</a>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ vacancy.description }}</p>
+                    <p>{{ vacancy.city.name }} | {{ vacancy.language }} | <small>{{ vacancy.timestamp }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

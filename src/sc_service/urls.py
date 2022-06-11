@@ -22,5 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('list/', list_view, name='list'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('detail/<int:pk_v>', VacDetail.as_view(), name='detail'),
+    path('create/', VacCreate.as_view(), name='create'),
+    path('update/<int:pk>/', VacUpdate.as_view(), name='update'),
     path('', home_view, name='home'),
 ]
