@@ -1,8 +1,9 @@
+from django.contrib import messages
 from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views.generic import DetailView, ListView, CreateView, UpdateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 from datetime import datetime, timedelta
 
 from .models import *
@@ -94,3 +95,23 @@ class VacUpdate(UpdateView):
     model = Vacancy
     form_class = VacUpdateForm
     success_url = reverse_lazy('home')
+
+
+class VacDelete(DeleteView):
+    template_name = 'scraping/create.html'
+    model = Vacancy
+    success_url = reverse_lazy('home')
+
+    def post(self, request, *args, **kwargs):
+        form = super(VacDelete, self).post(request, *args, **kwargs)
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super(VacDelete, self).get_context_data(**kwargs)
+        context['form_delete'] = context.get('form')
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = super(VacDelete, self).post(request, *args, **kwargs)
+        messages.add_message(request, messages.SUCCESS, 'Запись успешно удалена')
+        return form

@@ -25,5 +25,6 @@ urlpatterns = [
     path('detail/<int:pk_v>', VacDetail.as_view(), name='detail'),
     path('create/', VacCreate.as_view(), name='create'),
     path('update/<int:pk>/', VacUpdate.as_view(), name='update'),
+    path('delete/<int:pk>/', VacDelete.as_view(), name='delete'),
     path('', home_view, name='home'),
 ]

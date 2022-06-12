@@ -4,10 +4,12 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 ms-auto me-auto">
-            {% for obj in object_list %}
+            {% if object_list %}
             <div class="text-center">
                 <h4>По вашему запросу получены следующие результаты</h4>
             </div>
+            {% endif %}
+            {% for obj in object_list %}
             <div class="card mt-3">
                 <div class="card-header">
                     <a href="{{ obj.url }}">{{ obj.title }}</a>
