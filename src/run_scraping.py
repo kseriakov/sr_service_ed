@@ -88,10 +88,11 @@ loop.close()
 #             jobs += j
 #             errors += e
 #
+
 for job in jobs:
     try:
         Vacancy.objects.create(**job)
-    except DatabaseError:
+    except DatabaseError as err:
         pass
 
 qs = Error.objects.filter(timestamp=datetime.datetime.today())

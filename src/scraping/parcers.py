@@ -50,7 +50,7 @@ def hh_ru(url, city=None, language=None):
             soup = bs(request.content, 'html.parser')
             div_main = soup.find('div', attrs={'id': 'a11y-main-content'})
             if div_main:
-                div_list = div_main.find_all('div', class_='vacancy-serp-item')
+                div_list = div_main.find_all('div', class_='serp-item')
                 for item in div_list:
                     title = item.find('a').string
                     href = item.find('a')['href']
@@ -94,7 +94,8 @@ def super_job(url, city=None, language=None):
                     href = domain + item.find('a')['href']
                     company = 'Noname'
                     if cmp := item.find_all('a').pop(1):
-                        company = cmp.string
+                        # Получение атрибута тега img
+                        company = cmp.img['alt']
                     content_list = item.find_all('span')
                     for i in content_list:
                         if len(i.text) > 70:
